@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-# Stock_tui
-Sock analyzes
-=======
+
 # stock-tui
 
 Real-time stock and cryptocurrency tracker for the terminal.
