@@ -10,6 +10,7 @@ import (
 	"github.com/nisarga/stock-tui/internal/ui/chart"
 	"github.com/nisarga/stock-tui/internal/ui/footer"
 	"github.com/nisarga/stock-tui/internal/ui/help"
+	"github.com/nisarga/stock-tui/internal/ui/styles"
 	"github.com/nisarga/stock-tui/internal/ui/watchlist"
 )
 
@@ -30,6 +31,10 @@ type AppModel struct {
 	lastQuotes    []models.Quote
 	lastHistory   map[string][]models.Candle
 	err           error
+
+	// Theme management
+	currentThemeIndex int
+	availableThemes   []string
 }
 
 type tickMsg time.Time
@@ -59,15 +64,20 @@ func New(cfg *models.AppConfig) (*AppModel, error) {
 		tr = models.Range30D
 	}
 
+	// Initialize themes
+	availableThemes := styles.GetAvailableThemes()
+
 	return &AppModel{
-		cfg:         cfg,
-		provider:    prov,
-		watchlist:   watchlist.New(cfg.Symbols),
-		chart:       chart.New(),
-		footer:      footer.New(prov.Name()),
-		help:        help.New(),
-		timeRange:   tr,
-		lastHistory: make(map[string][]models.Candle),
+		cfg:             cfg,
+		provider:        prov,
+		watchlist:       watchlist.New(cfg.Symbols),
+		chart:           chart.New(),
+		footer:          footer.New(prov.Name()),
+		help:            help.New(),
+		timeRange:       tr,
+		lastHistory:     make(map[string][]models.Candle),
+		currentThemeIndex: 0,
+		availableThemes: availableThemes,
 	}, nil
 }
 
@@ -193,7 +203,11 @@ func (m *AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "c":
 			m.chart.CycleChartType()
 			return m, nil
-		}
+		
+		case "t":
+			m.cycleTheme()
+			return m, nil
+		
 
 	case tickMsg:
 		cmds = append(cmds, m.fetchQuotes(), m.waitForTick())
@@ -282,6 +296,19 @@ func (m *AppModel) refreshCurrentChart() tea.Cmd {
 	}
 	m.chart.SetLoading(true)
 	return m.fetchHistory(sel, m.timeRange)
+}
+
+func (m *AppModel) cycleTheme() {
+	if len(m.availableThemes) == 0 {
+		return
+	}
+	
+	m.currentThemeIndex = (m.currentThemeIndex + 1) % len(m.availableThemes)
+	currentTheme := m.availableThemes[m.currentThemeIndex]
+	styles.SetThemeByName(currentTheme)
+	
+	// Update footer to show current theme
+	m.footer.SetStatusMessage("Theme: " + currentTheme)
 }
 
 func (m *AppModel) View() string {

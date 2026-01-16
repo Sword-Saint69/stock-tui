@@ -93,6 +93,9 @@ func (m Model) render() string {
 		return "Too small"
 	}
 
+	// Declare reusable style variables
+	var greenS, redS, dimS lipgloss.Style
+
 	// Get price data
 	n := len(m.data)
 	closes := make([]float64, n)
@@ -124,20 +127,21 @@ func (m Model) render() string {
 	pct := change / closes[0] * 100
 
 	up := change >= 0
-	trendColor := styles.ColorSuccess
+	currentTheme = styles.GetTheme()
+	trendColor := currentTheme.ColorSuccess
 	if !up {
-		trendColor = styles.ColorError
+		trendColor = currentTheme.ColorError
 	}
 
 	var b strings.Builder
 	b.WriteString(lipgloss.NewStyle().Bold(true).Render(m.symbol))
 	b.WriteString("  ")
-	b.WriteString(lipgloss.NewStyle().Foreground(styles.ColorSubtext).Render(string(m.timeRange)))
+	b.WriteString(lipgloss.NewStyle().Foreground(currentTheme.ColorSubtext).Render(string(m.timeRange)))
 	b.WriteString("  ")
 	b.WriteString(lipgloss.NewStyle().Foreground(trendColor).Bold(true).Render(
 		fmt.Sprintf("$%.2f (%+.2f%%)", lastP, pct)))
 	b.WriteString("  ")
-	b.WriteString(lipgloss.NewStyle().Foreground(styles.ColorSubtext).Render("["+m.ChartTypeName()+"]"))
+	b.WriteString(lipgloss.NewStyle().Foreground(currentTheme.ColorSubtext).Render("["+m.ChartTypeName()+"]"))
 	b.WriteString("\n\n")
 
 	// Build canvas (plain runes, style later per-row)
@@ -258,9 +262,10 @@ func (m Model) render() string {
 	}
 
 	// Render canvas with colors
-	greenS := lipgloss.NewStyle().Foreground(styles.ColorSuccess)
-	redS := lipgloss.NewStyle().Foreground(styles.ColorError)
-	dimS := lipgloss.NewStyle().Foreground(styles.ColorSubtext)
+	currentTheme := styles.GetTheme()
+	greenS = lipgloss.NewStyle().Foreground(currentTheme.ColorSuccess)
+	redS = lipgloss.NewStyle().Foreground(currentTheme.ColorError)
+	dimS = lipgloss.NewStyle().Foreground(currentTheme.ColorSubtext)
 
 	for row := 0; row < chartH; row++ {
 		// Y-axis label
@@ -320,11 +325,12 @@ func (m Model) sparkline(prices []float64, width int) string {
 	}
 
 	step := float64(n) / float64(width)
-	greenS := lipgloss.NewStyle().Foreground(styles.ColorSuccess)
-	redS := lipgloss.NewStyle().Foreground(styles.ColorError)
+	currentTheme = styles.GetTheme()
+	greenS = lipgloss.NewStyle().Foreground(currentTheme.ColorSuccess)
+	redS = lipgloss.NewStyle().Foreground(currentTheme.ColorError)
 
 	var out strings.Builder
-	out.WriteString(lipgloss.NewStyle().Foreground(styles.ColorSubtext).Render("   Trend "))
+	out.WriteString(lipgloss.NewStyle().Foreground(currentTheme.ColorSubtext).Render("   Trend "))
 
 	prev := prices[0]
 	for i := 0; i < width; i++ {

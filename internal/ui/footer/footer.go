@@ -16,6 +16,7 @@ type Model struct {
 	connected  bool
 	err        error
 	timeRange  models.TimeRange
+	customMessage string
 }
 
 func New(provider string) Model {
@@ -46,6 +47,12 @@ func (m *Model) SetStatus(lastUpdate time.Time, connected bool, err error) {
 
 func (m *Model) SetTimeRange(tr models.TimeRange) {
 	m.timeRange = tr
+}
+
+func (m *Model) SetStatusMessage(message string) {
+	m.customMessage = message
+	// Clear the custom message after a certain time
+	// This is handled by the app which calls this when needed
 }
 
 func (m Model) View() string {
@@ -87,11 +94,18 @@ func (m Model) View() string {
 
 	center := rangeStr
 
-	timeStr := m.lastUpdate.Format("15:04:05")
-	if m.err != nil {
-		timeStr = "Error"
+	right := base.Render(fmt.Sprintf(" %s  ? Help  q Quit ", m.lastUpdate.Format("15:04:05")))
+	
+	if m.customMessage != "" {
+		// Display custom message instead of time
+		right = base.Render(fmt.Sprintf(" %s  ? Help  q Quit ", m.customMessage))
+	} else {
+		timeStr := m.lastUpdate.Format("15:04:05")
+		if m.err != nil {
+			timeStr = "Error"
+		}
+		right = base.Render(fmt.Sprintf(" %s  ? Help  q Quit ", timeStr))
 	}
-	right := base.Render(fmt.Sprintf(" %s  ? Help  q Quit ", timeStr))
 
 	leftW := lipgloss.Width(left)
 	rightW := lipgloss.Width(right)

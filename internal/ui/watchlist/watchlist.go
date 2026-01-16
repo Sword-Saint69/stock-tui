@@ -100,12 +100,15 @@ func (d delegate) Render(w io.Writer, m list.Model, index int, listItem list.Ite
 		row := fmt.Sprintf("%s %s %s", symStr, priceStr, pctStr)
 		fmt.Fprint(w, styles.SelectedItem.Render(row))
 	} else {
-		symStyled := lipgloss.NewStyle().Foreground(styles.ColorText).Render(symStr)
-		priceStyled := lipgloss.NewStyle().Foreground(styles.ColorText).Render(priceStr)
+		currentTheme := styles.GetTheme()
+		symStyled := lipgloss.NewStyle().Foreground(currentTheme.ColorText).Render(symStr)
+		priceStyled := lipgloss.NewStyle().Foreground(currentTheme.ColorText).Render(priceStr)
 
-		pctStyle := styles.PositiveChange
-		if it.changePct < 0 {
-			pctStyle = styles.NegativeChange
+		var pctStyle lipgloss.Style
+		if it.changePct >= 0 {
+			pctStyle = lipgloss.NewStyle().Foreground(currentTheme.ColorSuccess)
+		} else {
+			pctStyle = lipgloss.NewStyle().Foreground(currentTheme.ColorError)
 		}
 		pctStyled := pctStyle.Render(pctStr)
 

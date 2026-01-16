@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+# Stock_tui
+Sock analyzes
+=======
 # stock-tui
 
 Real-time stock and cryptocurrency tracker for the terminal.
@@ -11,6 +15,7 @@ Real-time stock and cryptocurrency tracker for the terminal.
 - Historical price charts with multiple time ranges
 - Sparkline visualization
 - Keyboard-driven interface with Vim-style navigation
+- 10 built-in color themes with easy switching capability
 
 ## Installation
 
@@ -80,8 +85,26 @@ symbols = [
 | `4` | 30 day range |
 | `c` | Cycle chart type (Line/Area/Bars/Dots) |
 | `r` | Refresh data |
+| `t` | Cycle through themes |
 | `?` | Toggle help |
 | `q` | Quit |
+
+## Themes
+
+The application includes 10 different color themes:
+
+- `default`: Purple primary with light gray accents
+- `dark`: Dark theme with purple highlights
+- `light`: Light theme with dark text
+- `solarized`: Solarized color palette
+- `monokai`: Monokai-inspired theme
+- `dracula`: Dracula theme colors
+- `nord`: Nord color palette
+- `gruvbox`: Gruvbox color scheme
+- `tokyo-night`: Tokyo Night theme
+- `catppuccin`: Catppuccin theme
+
+Press `t` to cycle through available themes.
 
 ## Data Providers
 
@@ -115,7 +138,7 @@ internal/
     ├── footer/      Status bar
     ├── help/        Help overlay
     ├── modal/       Generic modal
-    ├── styles/      Lip Gloss styles
+    ├── styles/      Lip Gloss styles and theme management
     └── watchlist/   Symbol list
 ```
 
@@ -138,3 +161,4 @@ go vet ./...
 ## License
 
 MIT
+>>>>>>> 80527be (update)
