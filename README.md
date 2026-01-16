@@ -2,7 +2,7 @@
 
 Real-time stock and cryptocurrency tracker for the terminal.
 
-![Screenshot Placeholder](https://via.placeholder.com/800x400?text=stock-tui)
+![screenshot](screenshots/stock-tui.png)
 
 ## Features
 
